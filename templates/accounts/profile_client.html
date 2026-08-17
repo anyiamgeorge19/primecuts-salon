@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}My Profile - Prime Cuts Salon & Barbershop{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:500px;">
+    <h1 class="mb-4">My Profile</h1>
+    <p><strong>Name:</strong> {{ user.get_full_name }}</p>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Phone:</strong> {{ user.phone_number }}</p>
+    <a href="{% url 'appointments:my_appointments' %}" class="btn btn-outline-primary">View My Appointments</a>
+</div>
+{% endblock %}

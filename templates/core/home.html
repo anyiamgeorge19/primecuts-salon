@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Prime Cuts Salon & Barbershop - Hair, Beard & Grooming Services{% endblock %}
+{% block content %}
+<section class="hero text-center">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-3">Look sharp. Feel confident. Book in minutes.</h1>
+        <p class="lead text-muted mb-4 col-lg-7 mx-auto">
+            Prime Cuts Salon & Barbershop connects you with skilled stylists and barbers for
+            haircuts, beard trims, coloring and braiding — booked online, no phone calls needed.
+        </p>
+        <a href="{% url 'appointments:book_appointment' %}" class="btn btn-primary btn-lg px-4">Book an Appointment</a>
+        <a href="{% url 'services:service_list' %}" class="btn btn-outline-secondary btn-lg px-4 ms-2">View Services</a>
+    </div>
+</section>
+
+<section class="container py-5">
+    <h2 class="text-center mb-4">Our Services</h2>
+    <div class="row g-4">
+        {% for service in services %}
+        <div class="col-md-4">
+            <div class="card h-100 p-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ service.name }}</h5>
+                    <p class="card-text text-muted">{{ service.description|truncatewords:18 }}</p>
+                    <p class="fw-semibold">{{ service.duration_minutes }} mins &middot; ₦{{ service.price }}</p>
+                    <a href="{% url 'services:service_detail' service.slug %}" class="btn btn-sm btn-outline-primary">Learn more</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">Services will appear here once added by the admin.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="container py-5">
+    <h2 class="text-center mb-4">Meet Our Stylists</h2>
+    <div class="row g-4">
+        {% for t in stylists %}
+        <div class="col-md-3 col-6 text-center">
+            <div class="card p-3">
+                <h6 class="mb-1">{{ t.get_full_name|default:t.username }}</h6>
+                <p class="text-muted small mb-2">{{ t.specialization }}</p>
+                <a href="{% url 'appointments:stylist_detail' t.pk %}" class="btn btn-sm btn-outline-primary">View Profile</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">Our stylist team will appear here once added by the admin.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

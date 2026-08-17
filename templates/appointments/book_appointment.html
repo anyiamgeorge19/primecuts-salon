@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Book an Appointment - Prime Cuts Salon & Barbershop{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:600px;">
+    <h1 class="mb-4">Book an Appointment</h1>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label class="form-label">Service</label>
+            {{ form.service }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Stylist</label>
+            {{ form.stylist }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            {{ form.date }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Available Time Slots</label>
+            <select class="form-select" id="slot-select">
+                <option value="">Choose service, stylist and date first...</option>
+            </select>
+            <small class="text-muted">Slots shown are only the ones this stylist is free for.</small>
+        </div>
+        {{ form.start_time }}
+
+        <div class="mb-3">
+            <label class="form-label">Notes (optional)</label>
+            {{ form.notes }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Request Appointment</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const serviceEl = document.getElementById("id_service");
+    const stylistEl = document.getElementById("id_stylist");
+    const dateEl = document.getElementById("id_date");
+    const slotSelect = document.getElementById("slot-select");
+    const startTimeEl = document.getElementById("id_start_time");
+
+    // The real start_time field is hidden -- the visible dropdown drives it.
+    startTimeEl.closest(".mb-3").style.display = "none";
+
+    async function refreshSlots() {
+        const service = serviceEl.value, stylist = stylistEl.value, date = dateEl.value;
+        slotSelect.innerHTML = "<option value=''>Loading...</option>";
+        if (!service || !stylist || !date) {
+            slotSelect.innerHTML = "<option value=''>Choose service, stylist and date first...</option>";
+            return;
+        }
+        const url = `{% url 'appointments:available_slots' %}?service=${service}&stylist=${stylist}&date=${date}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.slots.length === 0) {
+            slotSelect.innerHTML = "<option value=''>No free slots that day -- try another date</option>";
+            return;
+        }
+        slotSelect.innerHTML = "<option value=''>Select a time...</option>" +
+            data.slots.map(s => `<option value="${s}">${s}</option>`).join("");
+    }
+
+    [serviceEl, stylistEl, dateEl].forEach(el => el.addEventListener("change", refreshSlots));
+    slotSelect.addEventListener("change", () => { startTimeEl.value = slotSelect.value; });
+});
+</script>
+{% endblock %}

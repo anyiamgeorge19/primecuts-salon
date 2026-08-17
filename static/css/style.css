@@ -1,0 +1,37 @@
+:root {
+    --brand-primary: #4c6b5f;
+    --brand-soft: #eef3f0;
+    --brand-accent: #c98b5e;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #2c332f;
+    background-color: #fbfaf8;
+}
+
+.text-primary, .navbar-brand { color: var(--brand-primary) !important; }
+.btn-primary {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+}
+.btn-primary:hover {
+    background-color: #3c554b;
+    border-color: #3c554b;
+}
+
+.hero {
+    background: linear-gradient(135deg, var(--brand-soft), #ffffff);
+    padding: 5rem 0;
+}
+
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.badge-status-pending { background-color: #f0ad4e; }
+.badge-status-confirmed { background-color: #4c6b5f; }
+.badge-status-completed { background-color: #6c757d; }
+.badge-status-cancelled { background-color: #d9534f; }

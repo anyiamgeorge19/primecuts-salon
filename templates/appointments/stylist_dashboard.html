@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard - Prime Cuts Salon & Barbershop{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">My Appointments</h1>
+    {% if appointments %}
+    <div class="table-responsive">
+    <table class="table align-middle">
+        <thead><tr><th>Client</th><th>Service</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for a in appointments %}
+            <tr>
+                <td>{{ a.client.get_full_name|default:a.client.username }}</td>
+                <td>{{ a.service.name }}</td>
+                <td>{{ a.date }}</td>
+                <td>{{ a.start_time }} - {{ a.end_time }}</td>
+                <td><span class="badge badge-status-{{ a.status }}">{{ a.get_status_display }}</span></td>
+                <td class="d-flex gap-1 flex-wrap">
+                    {% if a.status == "pending" %}
+                    <form method="post" action="{% url 'appointments:update_status' a.pk 'confirmed' %}">
+                        {% csrf_token %}<button class="btn btn-sm btn-success">Confirm</button>
+                    </form>
+                    {% endif %}
+                    {% if a.status == "confirmed" %}
+                    <form method="post" action="{% url 'appointments:update_status' a.pk 'completed' %}">
+                        {% csrf_token %}<button class="btn btn-sm btn-secondary">Mark Completed</button>
+                    </form>
+                    {% endif %}
+                    {% if a.status == "pending" or a.status == "confirmed" %}
+                    <form method="post" action="{% url 'appointments:cancel_appointment' a.pk %}">
+                        {% csrf_token %}<button class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this appointment?')">Cancel</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <p class="text-muted">No appointments booked with you yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

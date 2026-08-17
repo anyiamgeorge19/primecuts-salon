@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}My Appointments - Prime Cuts Salon & Barbershop{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">My Appointments</h1>
+    {% if appointments %}
+    <div class="table-responsive">
+    <table class="table align-middle">
+        <thead><tr><th>Stylist</th><th>Service</th><th>Date</th><th>Time</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        {% for a in appointments %}
+            <tr>
+                <td>{{ a.stylist.get_full_name|default:a.stylist.username }}</td>
+                <td>{{ a.service.name }}</td>
+                <td>{{ a.date }}</td>
+                <td>{{ a.start_time }} - {{ a.end_time }}</td>
+                <td><span class="badge badge-status-{{ a.status }}">{{ a.get_status_display }}</span></td>
+                <td>
+                    {% if a.status == "pending" or a.status == "confirmed" %}
+                    <form method="post" action="{% url 'appointments:cancel_appointment' a.pk %}">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this appointment?')">Cancel</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <p class="text-muted">You have no appointments yet. <a href="{% url 'appointments:book_appointment' %}">Book one now</a>.</p>
+    {% endif %}
+</div>
+{% endblock %}
